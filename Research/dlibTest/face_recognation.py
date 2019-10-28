@@ -43,3 +43,15 @@ for f in glob.glob(os.path.join(faces_folder_path, "*.jpg")):
         win.clear_overlay()
         win.add_overlay(d)
         win.add_overlay(shape)
+
+        face_descriptor = facerec.compute_face_descriptor(img, shape)
+        print(face_descriptor)
+
+        print("Computing descriptor on aligned image ...")
+
+        face_chip = dlib.get_face_chip(img, shape)
+
+        face_descriptor_from_prealigned_image = facerec.compute_face_descriptor(face_chip)
+        print(face_descriptor_from_prealigned_image)
+
+        dlib.hit_enter_to_continue()

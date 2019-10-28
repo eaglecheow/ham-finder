@@ -11,6 +11,9 @@ autopep8 = "*"
 pylint = "*"
 dlib = "*"
 numpy = "*"
+imutils = "*"
+matplotlib = "*"
+opencv-python = "*"
 
 [requires]
 python_version = "3.8"
