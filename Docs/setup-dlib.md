@@ -12,6 +12,8 @@
 
 > For this case, both Windows SDK and MSVC can be obtained through [Visual Studio Installer](https://visualstudio.microsoft.com/).
 
+> For the time this document is written, some of the packages that will be used only supports Python 3.7. Therefore it is recommended to check the version of Python you're using.
+
 ## How to Install
 
 1. Make sure all the tools mentioned in [this](#tools-required) section is installed correctly.
