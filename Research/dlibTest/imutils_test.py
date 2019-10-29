@@ -18,3 +18,4 @@ window = dlib.image_window()
 window.set_image(resized_image)
 
 dlib.hit_enter_to_continue()
+
