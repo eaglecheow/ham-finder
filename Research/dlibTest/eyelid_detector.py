@@ -7,30 +7,7 @@ from imutils import face_utils
 import matplotlib.pyplot as plt
 
 from utils.Camera import Camera, CameraType
-
-
-def euclidean_distance(pointA, pointB):
-
-    # Compute and return the euclidean distances between the 2 points
-    return numpy.linalg.norm(pointA - pointB)
-
-
-def eye_aspect_ratio(eye):
-
-    # Compute the euclidean distances between 2 sets of vertical eye
-    # landmarks (x,y) coordinate
-    A = euclidean_distance(eye[1], eye[5])
-    B = euclidean_distance(eye[2], eye[4])
-
-    # Compute the euclidean distance between the horizontal eye landmark
-    # (x, y) coordinate
-    C = euclidean_distance(eye[0], eye[3])
-
-    # Compute the eye aspect ratio
-    ear = (A + B) / (2.0 * C)
-
-    # Return the eye aspect ratio
-    return ear
+from libs.EyeDetector import EyeDetector
 
 
 plt.style.use("ggplot")
@@ -57,6 +34,7 @@ def live_plotter(x_vec, y1_data, line1, identifier='', pause_time=0.1):
 predictor_path = sys.argv[1]
 
 camera = Camera(CameraType.WEB_CAM)
+eye_detector = EyeDetector()
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(predictor_path)
 
@@ -89,8 +67,8 @@ while True:
         leftEye = np_shape[leftStart: leftEnd]
         rightEye = np_shape[rightStart: rightEnd]
 
-        leftEAR = eye_aspect_ratio(leftEye)
-        rightEAR = eye_aspect_ratio(rightEye)
+        leftEAR = eye_detector.eye_aspect_ratio(leftEye)
+        rightEAR = eye_detector.eye_aspect_ratio(rightEye)
 
         average_EAR = (leftEAR + rightEAR) / 2.0
 
