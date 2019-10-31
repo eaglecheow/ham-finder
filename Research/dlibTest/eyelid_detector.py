@@ -4,9 +4,9 @@ import dlib
 import numpy
 import matplotlib.pyplot as plt
 from imutils import face_utils
-import matplotlib.pyplot as plt
 
 from utils.Camera import Camera, CameraType
+from utils.SDCalculator import SDCalculator
 from libs.EyeDetector import EyeDetector
 
 
@@ -37,6 +37,8 @@ camera = Camera(CameraType.WEB_CAM)
 eye_detector = EyeDetector()
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(predictor_path)
+
+sd_calculator = SDCalculator()
 
 window = dlib.image_window()
 window.set_title("Face Detector")
@@ -71,6 +73,9 @@ while True:
         rightEAR = eye_detector.eye_aspect_ratio(rightEye)
 
         average_EAR = (leftEAR + rightEAR) / 2.0
+
+        sd_calculator.input_value(average_EAR)
+        print("Standard Deviation: {}".format(sd_calculator.sd_value))
 
         # print("Left EAR: {0:.3f} Right EAR: {0:.3f} Average EAR: {0:.3f}".format(
         #     leftEAR, rightEAR, average_EAR))
