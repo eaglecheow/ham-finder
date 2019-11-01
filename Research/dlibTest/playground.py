@@ -1,10 +1,15 @@
 from utils.SDCalculator import SDCalculator
+from utils.RTPlotter import RTPlotter
 
 sd_calculator = SDCalculator()
+rt_plotter = RTPlotter()
+
+rt_plotter.show_graph()
+yValue = 1
 
 while True:
-    value = float(input("Please input value: "))
-
-    sd_calculator.input_value(value)
-
-    print("Current Standard Deviation: {}".format(sd_calculator.sd_value))
+    rt_plotter.input_value(yValue)
+    yValue = yValue + 0.1
+    print("Current Value: {}".format(yValue))
+    if yValue >= 10:
+        yValue = 1      

@@ -7,6 +7,7 @@ from imutils import face_utils
 
 from utils.Camera import Camera, CameraType
 from utils.SDCalculator import SDCalculator
+from utils.RTPlotter import RTPlotter
 from libs.EyeDetector import EyeDetector
 
 
@@ -43,9 +44,12 @@ sd_calculator = SDCalculator()
 window = dlib.image_window()
 window.set_title("Face Detector")
 
-line1 = []
-x_vec = numpy.linspace(0, 1, 101)[0 : -1]
-y_vec = [0] * len(x_vec)
+ear_plotter = RTPlotter(title="Eye Aspect Ratio")
+std_plotter = RTPlotter(title="Standard Deviation")
+
+# line1 = []
+# x_vec = numpy.linspace(0, 1, 101)[0 : -1]
+# y_vec = [0] * len(x_vec)
 
 while True:
     frame = camera.take_frame()
@@ -75,7 +79,7 @@ while True:
         average_EAR = (leftEAR + rightEAR) / 2.0
 
         sd_calculator.input_value(average_EAR)
-        print("Standard Deviation: {}".format(sd_calculator.sd_value))
+        # print("Standard Deviation: {}".format(sd_calculator.sd_value))
 
         # print("Left EAR: {0:.3f} Right EAR: {0:.3f} Average EAR: {0:.3f}".format(
         #     leftEAR, rightEAR, average_EAR))
@@ -87,8 +91,12 @@ while True:
         # print("")
 
         # Plot EAR using matplotlib
-        y_vec[-1] = average_EAR
-        line1 = live_plotter(x_vec, y_vec, line1)
-        y_vec = numpy.append(y_vec[1:], 0.0)
+        # y_vec[-1] = average_EAR
+        # line1 = live_plotter(x_vec, y_vec, line1)
+        # y_vec = numpy.append(y_vec[1:], 0.0)
+
+        # print("Y_Vec: {}".format(y_vec))
+        ear_plotter.input_value(average_EAR)
+        std_plotter.input_value(sd_calculator.sd_value)
 
             
