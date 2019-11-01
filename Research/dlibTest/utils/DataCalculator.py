@@ -1,6 +1,6 @@
 import numpy
 
-class SDCalculator:
+class DataCalculator:
     
     def __init__(self, dataSize: int = 5, startingValue: float = 0):
         self.raw_data = [startingValue] * dataSize
@@ -18,5 +18,7 @@ class SDCalculator:
         self.raw_data.pop()
         self.raw_data.insert(0, value)
         self.calculate_standard_deviation()
+        self.calculate_mean_value()
+        self.calculate_median_value()
 
     

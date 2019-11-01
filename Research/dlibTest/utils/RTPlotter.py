@@ -6,7 +6,7 @@ plt.style.use("ggplot")
 
 class RTPlotter:
 
-    def __init__(self, pauseTime: float = 0.1, title="Title"):
+    def __init__(self, pauseTime: float = 0.01, title="Title"):
         # TODO: Initialization work
 
         self.pause_time = pauseTime
@@ -20,17 +20,17 @@ class RTPlotter:
         plt.ylabel("value")
         plt.title(title)
 
-        self.plotter = plt
+        self.fig = fig
 
     def show_graph(self):
-        self.plotter.show()
+        plt.show()
 
     def input_value(self, value: float):
         self.y_vec[-1] = value
         self.line1.set_ydata(self.y_vec)
         if numpy.min(self.y_vec) <= self.line1.axes.get_ylim()[0] or numpy.max(self.y_vec) >= self.line1.axes.get_ylim()[1]:
-            self.plotter.ylim(
+            self.fig.ylim(
                 [numpy.min(self.y_vec) - numpy.std(self.y_vec), numpy.max(self.y_vec) + numpy.std(self.y_vec)])
         self.y_vec = numpy.append(self.y_vec[1:], 0.0)
-        self.plotter.pause(self.pause_time)
+        plt.pause(self.pause_time)
         # print("Y_Vec: {}".format(self.y_vec))

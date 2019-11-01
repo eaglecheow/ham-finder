@@ -6,9 +6,10 @@ import matplotlib.pyplot as plt
 from imutils import face_utils
 
 from utils.Camera import Camera, CameraType
-from utils.SDCalculator import SDCalculator
+from utils.DataCalculator import DataCalculator
 from utils.RTPlotter import RTPlotter
 from libs.EyeDetector import EyeDetector
+from utils.GraphPlotter import GraphPlotter
 
 
 plt.style.use("ggplot")
@@ -39,13 +40,19 @@ eye_detector = EyeDetector()
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(predictor_path)
 
-sd_calculator = SDCalculator()
+data_calculator = DataCalculator(dataSize=5)
+data_calculator_median = DataCalculator(dataSize=50)
 
 window = dlib.image_window()
 window.set_title("Face Detector")
 
-ear_plotter = RTPlotter(title="Eye Aspect Ratio")
-std_plotter = RTPlotter(title="Standard Deviation")
+# ear_plotter = RTPlotter(title="Eye Aspect Ratio")
+# std_plotter = RTPlotter(title="Standard Deviation")
+# median_plotter = RTPlotter(title="Median")
+g_plotter = GraphPlotter()
+g_plotter.add_plot("ear")
+g_plotter.add_plot("std")
+g_plotter.add_plot("median")
 
 # line1 = []
 # x_vec = numpy.linspace(0, 1, 101)[0 : -1]
@@ -78,7 +85,8 @@ while True:
 
         average_EAR = (leftEAR + rightEAR) / 2.0
 
-        sd_calculator.input_value(average_EAR)
+        data_calculator.input_value(average_EAR)
+        data_calculator_median.input_value(average_EAR)
         # print("Standard Deviation: {}".format(sd_calculator.sd_value))
 
         # print("Left EAR: {0:.3f} Right EAR: {0:.3f} Average EAR: {0:.3f}".format(
@@ -96,7 +104,11 @@ while True:
         # y_vec = numpy.append(y_vec[1:], 0.0)
 
         # print("Y_Vec: {}".format(y_vec))
-        ear_plotter.input_value(average_EAR)
-        std_plotter.input_value(sd_calculator.sd_value)
+        # ear_plotter.input_value(average_EAR)
+        # std_plotter.input_value(data_calculator.sd_value)
+        # median_plotter.input_value(data_calculator.median_value)
+        g_plotter.input_value("ear", average_EAR)
+        g_plotter.input_value("std", data_calculator.sd_value)
+        g_plotter.input_value("median", data_calculator_median.median_value)
 
             
