@@ -26,6 +26,8 @@ g_plotter = GraphPlotter()
 g_plotter.add_plot("ear")
 g_plotter.add_plot("std")
 g_plotter.add_plot("median")
+g_plotter.add_plot("is_eye_open")
+# g_plotter.add_plot("action_level")
 
 while True:
     frame = camera.take_frame()
@@ -57,8 +59,20 @@ while True:
         data_calculator.input_value(average_EAR)
         data_calculator_median.input_value(average_EAR)
 
+        # action_level = 0
+        # if data_calculator.sd_value >= 0.025:
+        #     action_level = 0.4
+        # else:
+        #     action_level = 0
+
+        is_eye_open = 0
+        if average_EAR >= 0.25:
+            is_eye_open = 0.4
+
         g_plotter.input_value("ear", average_EAR)
         g_plotter.input_value("std", data_calculator.sd_value)
         g_plotter.input_value("median", data_calculator_median.median_value)
+        g_plotter.input_value("is_eye_open", is_eye_open)
+        # g_plotter.input_value("action_level", action_level)
 
             
