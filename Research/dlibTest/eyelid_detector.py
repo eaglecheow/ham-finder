@@ -2,36 +2,12 @@ import sys
 import cv2
 import dlib
 import numpy
-import matplotlib.pyplot as plt
 from imutils import face_utils
 
 from utils.Camera import Camera, CameraType
 from utils.DataCalculator import DataCalculator
-from utils.RTPlotter import RTPlotter
 from libs.EyeDetector import EyeDetector
 from utils.GraphPlotter import GraphPlotter
-
-
-plt.style.use("ggplot")
-
-def live_plotter(x_vec, y1_data, line1, identifier='', pause_time=0.1):
-    if line1 == []:
-        plt.ion()
-        fig = plt.figure(figsize=(13, 6))
-        ax = fig.add_subplot(111)
-        line1, = ax.plot(x_vec, y1_data, '-o', alpha=0.8)
-        plt.ylabel("Y Label")
-        plt.title("Title: {}".format(identifier))
-        plt.show()
-
-    line1.set_ydata(y1_data)
-
-    if numpy.min(y1_data) <= line1.axes.get_ylim()[0] or numpy.max(y1_data) >= line1.axes.get_ylim()[1]:
-        plt.ylim([numpy.min(y1_data) - numpy.std(y1_data), numpy.max(y1_data) + numpy.std(y1_data)])
-
-    plt.pause(pause_time)
-
-    return line1
 
 predictor_path = sys.argv[1]
 
@@ -46,17 +22,10 @@ data_calculator_median = DataCalculator(dataSize=50)
 window = dlib.image_window()
 window.set_title("Face Detector")
 
-# ear_plotter = RTPlotter(title="Eye Aspect Ratio")
-# std_plotter = RTPlotter(title="Standard Deviation")
-# median_plotter = RTPlotter(title="Median")
 g_plotter = GraphPlotter()
 g_plotter.add_plot("ear")
 g_plotter.add_plot("std")
 g_plotter.add_plot("median")
-
-# line1 = []
-# x_vec = numpy.linspace(0, 1, 101)[0 : -1]
-# y_vec = [0] * len(x_vec)
 
 while True:
     frame = camera.take_frame()
@@ -87,26 +56,7 @@ while True:
 
         data_calculator.input_value(average_EAR)
         data_calculator_median.input_value(average_EAR)
-        # print("Standard Deviation: {}".format(sd_calculator.sd_value))
 
-        # print("Left EAR: {0:.3f} Right EAR: {0:.3f} Average EAR: {0:.3f}".format(
-        #     leftEAR, rightEAR, average_EAR))
-
-        # Plot EAR using console
-        # value = int(average_EAR * 100)
-        # for i in range(value):
-        #     print("*", end='')
-        # print("")
-
-        # Plot EAR using matplotlib
-        # y_vec[-1] = average_EAR
-        # line1 = live_plotter(x_vec, y_vec, line1)
-        # y_vec = numpy.append(y_vec[1:], 0.0)
-
-        # print("Y_Vec: {}".format(y_vec))
-        # ear_plotter.input_value(average_EAR)
-        # std_plotter.input_value(data_calculator.sd_value)
-        # median_plotter.input_value(data_calculator.median_value)
         g_plotter.input_value("ear", average_EAR)
         g_plotter.input_value("std", data_calculator.sd_value)
         g_plotter.input_value("median", data_calculator_median.median_value)

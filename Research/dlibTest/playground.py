@@ -6,11 +6,11 @@
 
 from utils.GraphPlotter import GraphPlotter
 
-graph_plotter = GraphPlotter()
+graph_plotter = GraphPlotter(yRange=[0, 25])
 
 graph_plotter.show_graph()
-graph_plotter.add_plot("exampleOne")
-graph_plotter.add_plot("exampleTwo")
+graph_plotter.add_plot("exampleOne", title="Example One")
+graph_plotter.add_plot("exampleTwo", title="Example Two")
 yValue = 1
 
 while True:

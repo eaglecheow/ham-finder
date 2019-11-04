@@ -6,11 +6,12 @@ plt.style.use("ggplot")
 
 class GraphPlotter:
 
-    def __init__(self, pauseTime: float = 0.01):
+    def __init__(self, pauseTime: float = 0.01, yRange=[0, 0.5]):
         # TODO: Init stuff
         plt.ion()
         self.pause_time = pauseTime
         self.figure_list = []
+        self.y_range = yRange
         # figure = plt.figure(figsize=(13, 6))
         # self.ax = figure.add_subplot(111)
 
@@ -22,7 +23,12 @@ class GraphPlotter:
         # figure = plt.figure(figsize=(13, 6))
 
         # ax = figure.add_subplot(111)
-        line_value, = plt.plot(x_vec, y_vec, '-o', alpha=0.8)
+
+        if title == "":
+            title = identifier
+
+        line_value, = plt.plot(x_vec, y_vec, '-o', alpha=0.8, label=title)
+        plt.legend()
         self.figure_list.insert(len(self.figure_list), {
                                 "identifier": identifier, "line_value": line_value, "y_vec": y_vec})
 
@@ -43,6 +49,6 @@ class GraphPlotter:
         modify_object["line_value"].set_ydata(modify_object["y_vec"])
         # if numpy.min(modify_object["y_vec"]) <= modify_object["line_value"].axes.get_ylim()[0] or numpy.max(modify_object["y_vec"]) >= modify_object["line_value"].axes.get_ylim()[1]:
             # plt.ylim([numpy.min(modify_object["y_vec"]) - numpy.std(modify_object["y_vec"]), numpy.max(modify_object["y_vec"]) + numpy.std(modify_object["y_vec"])])
-        plt.ylim([0, 0.5])
+        plt.ylim(self.y_range)
         modify_object["y_vec"] = numpy.append(modify_object["y_vec"][1:], 0.0)
         plt.pause(self.pause_time)
