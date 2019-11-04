@@ -1,3 +1,5 @@
 {
-    "python.pythonPath": "C:\\Users\\user\\.virtualenvs\\dlibTest-EhpVkIin\\Scripts\\python.exe"
+    "python.pythonPath": "C:\\Users\\user\\.virtualenvs\\dlibTest-GA_Qycu-\\Scripts\\python.exe",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
 }

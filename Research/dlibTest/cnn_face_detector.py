@@ -5,7 +5,6 @@ Not really recommended on non-powerful devices
 import sys
 import dlib
 
-
 # If provided command line arguments not correct, show message and exit
 if (len(sys.argv) < 3):
     print(
