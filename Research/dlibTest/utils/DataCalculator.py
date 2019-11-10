@@ -8,6 +8,9 @@ class DataCalculator:
     def calculate_standard_deviation(self):
         self.sd_value = numpy.std(self.raw_data, ddof=1)
 
+    def calculate_variance(self):
+        self.variance_value = numpy.var(self.raw_data, ddof=1)
+
     def calculate_mean_value(self):
         self.mean_value = numpy.mean(self.raw_data)
 
@@ -20,5 +23,6 @@ class DataCalculator:
         self.calculate_standard_deviation()
         self.calculate_mean_value()
         self.calculate_median_value()
+        self.calculate_variance()
 
     
