@@ -7,6 +7,7 @@ mixed in.
 import sys
 import dlib
 from imutils import face_utils
+import time
 
 from utils.Camera import Camera, CameraType
 from utils.DataCalculator import DataCalculator
@@ -17,6 +18,7 @@ from utils.ImageTools import ImageTools
 
 VARIANCE25_THRESHOLD = 0.025
 MAX_IDLE_FRAME = 200
+MAX_IDLE_TIME = 10 # Maximum idle time to trigger in seconds
 
 
 # System arguments
@@ -57,8 +59,19 @@ plotter.add_plot("variance25", "Variance x25")
 
 idle_counter = 0
 is_idle = False
+accumulated_idle_time = 0
+
+previous_time = time.time()
+current_time = time.time()
+
+time.sleep(1)
 
 while True:
+
+    # Calculate time difference from previous frame
+    previous_time = current_time
+    current_time = time.time()
+    period = current_time - previous_time
 
     # Takes the current frame from camera
     frame = camera.take_frame()
@@ -111,11 +124,11 @@ while True:
     variance25 = data_calculator.variance_value * 25
 
     if variance25 > VARIANCE25_THRESHOLD:
-        idle_counter = 0
+        accumulated_idle_time = 0
     else:
-        idle_counter = idle_counter + 1
+        accumulated_idle_time = accumulated_idle_time + period
 
-    if idle_counter > MAX_IDLE_FRAME:
+    if accumulated_idle_time > MAX_IDLE_TIME:
         frame = ImageTools.add_text_to_image(frame, "Idle detected")
         
         # Set image to the image window

@@ -12,18 +12,11 @@ class GraphPlotter:
         self.pause_time = pauseTime
         self.figure_list = []
         self.y_range = yRange
-        # figure = plt.figure(figsize=(13, 6))
-        # self.ax = figure.add_subplot(111)
 
     def add_plot(self, identifier: str, title: str = ""):
 
         x_vec = numpy.linspace(0, 1, 101)[0: -1]
         y_vec = [0] * len(x_vec)
-
-        # figure = plt.figure(figsize=(13, 6))
-
-        # ax = figure.add_subplot(111)
-
         if title == "":
             title = identifier
 
@@ -47,8 +40,6 @@ class GraphPlotter:
 
         modify_object["y_vec"][-1] = value
         modify_object["line_value"].set_ydata(modify_object["y_vec"])
-        # if numpy.min(modify_object["y_vec"]) <= modify_object["line_value"].axes.get_ylim()[0] or numpy.max(modify_object["y_vec"]) >= modify_object["line_value"].axes.get_ylim()[1]:
-            # plt.ylim([numpy.min(modify_object["y_vec"]) - numpy.std(modify_object["y_vec"]), numpy.max(modify_object["y_vec"]) + numpy.std(modify_object["y_vec"])])
         plt.ylim(self.y_range)
         modify_object["y_vec"] = numpy.append(modify_object["y_vec"][1:], 0.0)
         plt.pause(self.pause_time)
