@@ -4,11 +4,12 @@ from enum import Enum
 class CameraType(Enum):
     WEB_CAM = 1
     PI_CAM = 2
+    VIDEO = 3
 
 
 class Camera:
 
-    def __init__(self, mode: CameraType):
+    def __init__(self, mode: CameraType, videoPath: str = ""):
 
         self.mode = mode
         # self.is_camera_open = False
@@ -29,6 +30,10 @@ class Camera:
             print("[Camera] Initializing camera in mode: PI_CAM")
             raise Exception("Not Implemented")
 
+        elif mode == CameraType.VIDEO:
+            print("[Camera] Running in VIDEO mode")
+            self.camera_object = cv2.VideoCapture(videoPath)
+
         else:
             print("[Camera] Camera mode does not exist")
             print("[Camera] Exiting program...")
@@ -37,7 +42,7 @@ class Camera:
 
     def take_frame(self):
 
-        if (self.mode == CameraType.WEB_CAM):
+        if (self.mode == CameraType.WEB_CAM or self.mode == CameraType.VIDEO):
             if self.camera_object.isOpened():
                 _, frame = self.camera_object.read()
                 return cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)

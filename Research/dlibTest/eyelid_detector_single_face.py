@@ -12,12 +12,30 @@ from utils.Camera import Camera, CameraType
 from utils.DataCalculator import DataCalculator
 from libs.EyeDetector import EyeDetector
 from utils.GraphPlotter import GraphPlotter
+from utils.ImageTools import ImageTools
+
+
+VARIANCE25_THRESHOLD = 0.025
+MAX_IDLE_FRAME = 200
+
 
 # System arguments
 predictor_path = sys.argv[1]
 
+# Check if code running in video mode
+is_video_mode = False
+video_path = ""
+if len(sys.argv) > 2:
+    is_video_mode = True
+    video_path = sys.argv[2]
+
 # Define class objects
 camera = Camera(CameraType.WEB_CAM)
+
+# Convert into video mode if enabled
+if is_video_mode:
+    camera = Camera(CameraType.VIDEO, video_path)
+
 eye_detector = EyeDetector()
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(predictor_path)
@@ -36,21 +54,27 @@ data_calculator_mean = DataCalculator(dataSize=50)
 plotter.add_plot("average_ear", "Average EAR")
 plotter.add_plot("variance25", "Variance x25")
 
+
+idle_counter = 0
+is_idle = False
+
 while True:
 
     # Takes the current frame from camera
     frame = camera.take_frame()
 
     dets = detector(frame)
-
-    window.set_image(frame)
     window.clear_overlay()
-
+    window.set_image(frame)
 
 
     # Select the closest face in the frame
     max_face_area = 0
     selected_face = None
+
+    # Skip loop if no face is detected
+    if len(dets) <= 0:
+        continue
 
     for k, d in enumerate(dets):
 
@@ -85,6 +109,19 @@ while True:
     data_calculator_mean.input_value(average_EAR)
     
     variance25 = data_calculator.variance_value * 25
+
+    if variance25 > VARIANCE25_THRESHOLD:
+        idle_counter = 0
+    else:
+        idle_counter = idle_counter + 1
+
+    if idle_counter > MAX_IDLE_FRAME:
+        frame = ImageTools.add_text_to_image(frame, "Idle detected")
+        
+        # Set image to the image window
+        window.set_image(frame)
+
+    
 
     # Plot the values
     plotter.input_value("average_ear", average_EAR)
