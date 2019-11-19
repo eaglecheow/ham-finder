@@ -17,7 +17,7 @@ from utils.ImageTools import ImageTools
 
 
 VARIANCE25_THRESHOLD = 0.025
-MAX_IDLE_FRAME = 200
+# MAX_IDLE_FRAME = 200
 MAX_IDLE_TIME = 10 # Maximum idle time to trigger in seconds
 
 
@@ -57,7 +57,7 @@ plotter.add_plot("average_ear", "Average EAR")
 plotter.add_plot("variance25", "Variance x25")
 
 
-idle_counter = 0
+# idle_counter = 0
 is_idle = False
 accumulated_idle_time = 0
 
