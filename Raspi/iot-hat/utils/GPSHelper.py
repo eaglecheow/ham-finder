@@ -46,8 +46,15 @@ class GPSHelper:
     def parseGps(dataString: str) -> GPSObject:
         msg = pynmea2.parse(dataString)
 
-        lat: float = msg.lat
-        lon: float = msg.lon
+        if msg.lat == "":
+            lat = 0
+        else:
+            lat: float = float(msg.lat)
+
+        if msg.lon == "":
+            lon = 0
+        else:
+            lon: float = float(msg.lon)
 
         latDegree = math.floor(lat / 100)
         latMinute = ((lat / 100) - latDegree) * 100
