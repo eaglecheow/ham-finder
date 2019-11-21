@@ -53,7 +53,7 @@ class GPSHelper:
         gpsObject.longitudeDirection = msg.lon_dir
         gpsObject.altitude = msg.altitude
         gpsObject.altitudeUnits = msg.altitude_units
-        gpsObject.satelliteAmount = msg.num_stats
+        gpsObject.satelliteAmount = msg.num_sats
 
         return gpsObject
 
@@ -65,20 +65,22 @@ class GPSHelper:
             return
 
         self.serialObj.sendLine("AT+CGNSPWR=1")
-        response = self.serialObj.readLine()
 
-        if response == "OK":
-            self.serialObj.sendLine("AT+CGNSTST=1")
+        self.serialObj.waitMessage("OK")
 
-            while True:
-                response = self.serialObj.readLine()
-                gpsObject = self.parseGps(response)
+        self.serialObj.sendLine("AT+CGNSTST=1")
 
-                if gpsObject.checkDataValidity() == True:
-                    return gpsObject
+        while True:
+            response = self.serialObj.readLine()
 
-                currentTime = time.time * 1000
-                if (currentTime - startTime) > timeout:
-                    raise Exception("[GPS] Timeout while getting GPS location")
-        else:
-            raise Exception("[GPS] No OK response from GPS device")        
+            if not response.find("GGA") > 0:
+                continue
+
+            gpsObject = self.parseGps(response)
+
+            if gpsObject.checkDataValidity() == True:
+                return gpsObject
+
+            currentTime = time.time() * 1000
+            if (currentTime - startTime) > timeout:
+                raise Exception("[GPS] Timeout while getting GPS location")      
