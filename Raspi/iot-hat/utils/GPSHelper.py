@@ -74,7 +74,7 @@ class GPSHelper:
 
         return gpsObject
 
-    def getGPS(self, timeout=10000):
+    def getGPSLocation(self, timeout=10000):
 
         startTime = time.time() * 1000
 

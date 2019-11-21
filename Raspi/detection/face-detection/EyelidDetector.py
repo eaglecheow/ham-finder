@@ -1,0 +1,122 @@
+from typing import List
+import os
+import dlib
+import numpy
+from imutils import face_utils
+import time
+
+from utils.Camera import Camera, CameraType
+from utils.DataProcessor import DataProcessor
+
+
+class EyelidDetector:
+
+    def __init__(
+        self, 
+        predictionFilePath: str, 
+        cameraType: CameraType = CameraType.WEB_CAM,
+        faceAbsenceTimeout: int = 100000,
+        eyelidMovementTimeout: int = 30000,
+        frameTimeTimeout: int = 500,
+        eyelidMovementThreshold: float = 0.025,
+        showFrame: bool = False
+        ):
+        super().__init__()
+
+        if not os.path.exists(predictionFilePath):
+            raise FileNotFoundError(predictionFilePath)
+
+        self.camera = Camera(cameraType)
+        self.faceDetector = dlib.get_frontal_face_detector()
+        self.faceFeatureDetector = dlib.shape_predictor(predictionFilePath)
+        self.dataProcessor = DataProcessor()
+
+        self.faceAbsenceTimeout = faceAbsenceTimeout
+        self.eyelidMovementTimeout = eyelidMovementTimeout
+        self.frameTimeTimeout = frameTimeTimeout
+        self.eyelidMovementThreshold = eyelidMovementThreshold
+        self.showFrame = showFrame
+
+        self.isIdle = False
+        self.accumulatedIdleTime = 0
+        
+        self.lastScanTime = time.time() * 1000
+        self.lastFacePresenceTime = time.time() * 1000
+        self.lastEyelidMoveTime = time.time() * 1000
+
+        if self.showFrame:
+            self.imageWindow = dlib.image_window()
+            self.imageWindow.set_title("Face Detector")
+
+    def frameDetection(self) -> bool:
+        currentTime = time.time() * 1000
+
+        if (currentTime - self.lastScanTime) > self.frameTimeTimeout:
+            raise Exception("[Face Detector] Each frame took too much time")
+
+        frame = self.camera.takeFrame()
+        detectedFaceList = self.faceDetector(frame)
+
+
+        if len(detectedFaceList) <= 0:
+
+            if (currentTime - self.lastFacePresenceTime) > self.faceAbsenceTimeout:
+                return False
+
+            return True
+
+        self.lastFacePresenceTime = currentTime
+
+
+        maxFaceArea = 0
+        selectedFace = None
+
+        for faceIndex, faceBoundingBox in enumerate(detectedFaceList):
+
+            xDiff = abs(faceBoundingBox.right() - faceBoundingBox.left())
+            yDiff = abs(faceBoundingBox.bottom() - faceBoundingBox.top())
+            faceArea = xDiff * yDiff
+
+            if faceArea > maxFaceArea:
+                maxFaceArea = faceArea
+                selectedFace = faceIndex
+
+        faceFeatures = self.faceFeatureDetector(frame, selectedFace)
+
+        faceFeaturePoints = face_utils.shape_to_np(faceFeatures)
+        (leftEyeStartIndex, leftEyeEndIndex) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
+        (rightEyeStartIndex, rightEyeEndIndex) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]
+
+        leftEyePoints = faceFeaturePoints[leftEyeStartIndex : leftEyeEndIndex]
+        rightEyePoints = faceFeaturePoints[rightEyeStartIndex : rightEyeEndIndex]
+
+        leftEAR = self.__eye_aspect_ratio__(leftEyePoints)
+        rightEAR = self.__eye_aspect_ratio__(rightEyePoints)
+        averageEAR = (leftEAR + rightEAR) / 2.0
+
+        self.dataProcessor.inputValue(averageEAR)
+        variance25 = self.dataProcessor.varValue * 25
+
+        if variance25 > self.eyelidMovementThreshold:
+            self.lastEyelidMoveTime = currentTime
+
+        if (self.lastEyelidMoveTime - currentTime) > self.eyelidMovementTimeout:
+            return False
+
+
+
+
+    def __euclidean_distance__(self, pointA: float, pointB: float) -> float:
+
+        return numpy.linalg.norm(pointA - pointB)
+
+    def __eye_aspect_ratio__(self, eye: List[float]) -> float:
+
+        A = self.__euclidean_distance__(eye[1], eye[5])
+        B = self.__euclidean_distance__(eye[2], eye[4])
+
+        C = self.__euclidean_distance__(eye[0], eye[3])
+
+        ear = (A + B) / (2.0 * C)
+
+        return ear
