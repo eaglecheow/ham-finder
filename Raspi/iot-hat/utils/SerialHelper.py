@@ -1,5 +1,7 @@
 import serial
 import time
+import datetime
+import logging
 
 class SerialHelper:
 
@@ -30,11 +32,11 @@ class SerialHelper:
             raise Exception("[Serial] Trying to read data with closed serial")
 
         returnMessage = self.serialObject.readline().decode().strip("\r\n")
-        print("--> {}".format(returnMessage))
+        print("[{}] {}".format(datetime.datetime.now().time(), returnMessage))
 
         return returnMessage
 
-    def waitMessage(self, matchingString: str, timeout: int = 10000):
+    def waitMessage(self, matchingString: str, timeout: int = 10000, errorMessage: str = None):
         startTime = time.time() * 1000
 
         while True:
@@ -45,5 +47,11 @@ class SerialHelper:
             currentTime = time.time() * 1000
 
             if (currentTime - startTime) > timeout:
-                raise Exception("[Serial] Timeout while waiting for expected message: {}".format(matchingString))
+
+                msg = errorMessage
+
+                if msg == None:
+                    msg = "[Serial] Timeout while waiting for expected message: {}".format(matchingString)
+
+                raise Exception(msg)
 

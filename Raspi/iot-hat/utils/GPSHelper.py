@@ -66,7 +66,7 @@ class GPSHelper:
 
         self.serialObj.sendLine("AT+CGNSPWR=1")
 
-        self.serialObj.waitMessage("OK")
+        self.serialObj.waitMessage("OK", errorMessage="[GPS] Unable to get OK response from device")
 
         self.serialObj.sendLine("AT+CGNSTST=1")
 
