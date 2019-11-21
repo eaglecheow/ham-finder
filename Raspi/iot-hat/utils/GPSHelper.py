@@ -2,6 +2,7 @@ import serial
 import pynmea2
 import time
 from utils.SerialHelper import SerialHelper
+import math
 
 class GPSObject:
     def __init__(self):
@@ -45,11 +46,20 @@ class GPSHelper:
     def parseGps(dataString: str) -> GPSObject:
         msg = pynmea2.parse(dataString)
 
+        lat: float = msg.lat
+        lon: float = msg.lon
+
+        latDegree = math.floor(lat / 100)
+        latMinute = ((lat / 100) - latDegree) * 100
+        
+        lonDegree = math.floor(lon / 100)
+        lonMinute = ((lon / 100) - lonDegree) * 100
+
         gpsObject = GPSObject()
         gpsObject.timeStamp = msg.timestamp
-        gpsObject.latitude = msg.lat
+        gpsObject.latitude = latDegree + (latMinute / 60)
         gpsObject.latitudeDirection = msg.lat_dir
-        gpsObject.longitude = msg.lon
+        gpsObject.longitude = lonDegree + (lonMinute / 60)
         gpsObject.longitudeDirection = msg.lon_dir
         gpsObject.altitude = msg.altitude
         gpsObject.altitudeUnits = msg.altitude_units
