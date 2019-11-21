@@ -1,14 +1,7 @@
+from utils.GPSHelper import GPSObject, GPSHelper
 from utils.SerialHelper import SerialHelper
-import time
 
-sh = SerialHelper("COM4")
+serial = SerialHelper("COM4")
+gpsHelper = GPSHelper(serial)
 
-sh.openSerial()
-sh.sendLine("AT+CGNSPWR=1")
-time.sleep(1)
-sh.sendLine("AT+CGNSTST=1")
-time.sleep(1)
-
-while True:
-    message = sh.readLine()
-    print("Message: {}".format(message))
+gpsLoc = gpsHelper.getGPS()
