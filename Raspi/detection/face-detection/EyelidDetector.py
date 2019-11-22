@@ -57,6 +57,10 @@ class EyelidDetector:
         frame = self.camera.takeFrame()
         detectedFaceList = self.faceDetector(frame)
 
+        if self.showFrame:
+            self.imageWindow.clear_overlay()
+            self.imageWindow.set_image(frame)
+            
 
         if len(detectedFaceList) <= 0:
 
@@ -82,6 +86,10 @@ class EyelidDetector:
                 selectedFace = faceIndex
 
         faceFeatures = self.faceFeatureDetector(frame, selectedFace)
+
+        if self.showFrame:
+            self.imageWindow.add_overlay(selectedFace)
+            self.imageWindow.add_overlay(faceFeatures)
 
         faceFeaturePoints = face_utils.shape_to_np(faceFeatures)
         (leftEyeStartIndex, leftEyeEndIndex) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
