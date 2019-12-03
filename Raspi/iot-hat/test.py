@@ -1,10 +1,10 @@
 from utils.GPSHelper import GPSObject, GPSHelper
 from utils.SerialHelper import SerialHelper
+from utils.TCPHelper import TCPHelper
 
 serial = SerialHelper("COM4")
 gpsHelper = GPSHelper(serial)
+tcpHelper = TCPHelper(serial, "35.234.201.162", 8200, "celcom2g")
 
-gpsLoc = gpsHelper.getGPSLocation(60000)
-
-print("Latitude: {} {}".format(gpsLoc.latitude, gpsLoc.latitudeDirection))
-print("Longitude: {} {}".format(gpsLoc.longitude, gpsLoc.longitudeDirection))
+tcpHelper.initializeDevice()
+tcpHelper.sendMessage("Hello Eagle")

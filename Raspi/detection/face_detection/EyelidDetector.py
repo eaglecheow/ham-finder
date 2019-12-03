@@ -17,7 +17,7 @@ class EyelidDetector:
         cameraType: CameraType = CameraType.WEB_CAM,
         faceAbsenceTimeout: int = 100000,
         eyelidMovementTimeout: int = 30000,
-        frameTimeTimeout: int = 500,
+        frameTimeTimeout: int = 1000,
         eyelidMovementThreshold: float = 0.025,
         showFrame: bool = False
         ):
@@ -26,9 +26,12 @@ class EyelidDetector:
         if not os.path.exists(predictionFilePath):
             raise FileNotFoundError(predictionFilePath)
 
+        faceDetector = dlib.get_frontal_face_detector()
+        faceFeatureDetector = dlib.shape_predictor(predictionFilePath)
+
         self.camera = Camera(cameraType)
-        self.faceDetector = dlib.get_frontal_face_detector()
-        self.faceFeatureDetector = dlib.shape_predictor(predictionFilePath)
+        self.faceDetector = faceDetector
+        self.faceFeatureDetector = faceFeatureDetector
         self.dataProcessor = DataProcessor()
 
         self.faceAbsenceTimeout = faceAbsenceTimeout
@@ -53,6 +56,8 @@ class EyelidDetector:
 
         if (currentTime - self.lastScanTime) > self.frameTimeTimeout:
             raise Exception("[Face Detector] Each frame took too much time")
+
+        self.lastScanTime = currentTime
 
         frame = self.camera.takeFrame()
         detectedFaceList = self.faceDetector(frame)
@@ -83,7 +88,7 @@ class EyelidDetector:
 
             if faceArea > maxFaceArea:
                 maxFaceArea = faceArea
-                selectedFace = faceIndex
+                selectedFace = faceBoundingBox
 
         faceFeatures = self.faceFeatureDetector(frame, selectedFace)
 
@@ -108,8 +113,12 @@ class EyelidDetector:
         if variance25 > self.eyelidMovementThreshold:
             self.lastEyelidMoveTime = currentTime
 
-        if (self.lastEyelidMoveTime - currentTime) > self.eyelidMovementTimeout:
+        print("Eyelid idle time: {} ms".format(currentTime - self.lastEyelidMoveTime))
+
+        if (currentTime - self.lastEyelidMoveTime) > self.eyelidMovementTimeout:
             return False
+
+        return True
 
 
 
