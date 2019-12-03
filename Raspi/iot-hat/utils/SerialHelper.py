@@ -97,10 +97,11 @@ class SerialHelper:
             messageToSend = messagePair[0]
             messageToExpect = messagePair[1]
 
-            try:
-                self.sendLine(messageToSend)
-            except SerialException:
-                print("Disconnect detected while writing")
+            if not messageToSend.startswith("[EMPTY]"):
+                try:
+                    self.sendLine(messageToSend)
+                except SerialException:
+                    print("Disconnect detected while writing")
 
 
             readSuccess = False

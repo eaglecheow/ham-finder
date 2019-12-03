@@ -47,8 +47,10 @@ class TCPHelper:
 
         
         self.serialObj.sendLine("AT+CIPSEND")
-        self.serialObj.sendLine("This is a sub-project under the main Project All***")
+        self.serialObj.sendLine(message)
         self.serialObj.sendCtrlZ()
+
+        self.serialObj.communicate([["[EMPTY]", "SEND OK"]])
 
         # messagePair = [
         #     ["AT+CIPSEND", ""],
