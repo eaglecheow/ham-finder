@@ -6,8 +6,8 @@ import logging
 import re
 from typing import List, Tuple
 
-class SerialHelper:
 
+class SerialHelper:
     def __init__(self, port: str, baudRate: int = 9600, doNotOpen: bool = False):
         super().__init__()
 
@@ -29,7 +29,6 @@ class SerialHelper:
 
         self.serialObject.write("\x1A".encode() + b"\r\n")
 
-
     def sendLine(self, text: str):
         if self.serialObject.is_open == False:
             raise Exception("[Serial] Trying to send data with closed serial")
@@ -46,7 +45,9 @@ class SerialHelper:
 
         return returnMessage
 
-    def waitMessage(self, matchingString: str, timeout: int = 10000, errorMessage: str = None):
+    def waitMessage(
+        self, matchingString: str, timeout: int = 10000, errorMessage: str = None
+    ):
         startTime = time.time() * 1000
 
         while True:
@@ -61,11 +62,15 @@ class SerialHelper:
                 msg = errorMessage
 
                 if msg == None:
-                    msg = "[Serial] Timeout while waiting for expected message: {}".format(matchingString)
+                    msg = "[Serial] Timeout while waiting for expected message: {}".format(
+                        matchingString
+                    )
 
                 raise Exception(msg)
 
-    def waitPattern(self, matchingPattern: str, timeout: int = 10000, errorMessage: str = None):
+    def waitPattern(
+        self, matchingPattern: str, timeout: int = 10000, errorMessage: str = None
+    ):
 
         startTime = time.time() * 1000
 
@@ -83,17 +88,16 @@ class SerialHelper:
                 msg = errorMessage
 
                 if msg == None:
-                    msg = "[Serial] Timeout while waiting for expected pattern: {}".format(matchingPattern)
+                    msg = "[Serial] Timeout while waiting for expected pattern: {}".format(
+                        matchingPattern
+                    )
 
                 raise Exception(msg)
 
-    def communicate(
-        self, 
-        messagePairList: List[Tuple[str, str]]
-        ):
+    def communicate(self, messagePairList: List[Tuple[str, str]]):
 
         for messagePair in messagePairList:
-            
+
             messageToSend = messagePair[0]
             messageToExpect = messagePair[1]
 
@@ -103,13 +107,12 @@ class SerialHelper:
                 except SerialException:
                     print("Disconnect detected while writing")
 
-
             readSuccess = False
 
             while readSuccess == False:
 
                 try:
-                    if (messageToExpect.startswith("[REGEX]")):
+                    if messageToExpect.startswith("[REGEX]"):
 
                         messageToExpect = messageToExpect.replace("[REGEX]", "")
 

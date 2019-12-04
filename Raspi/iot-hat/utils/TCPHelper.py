@@ -33,7 +33,7 @@ class TCPHelper:
                 'AT+CIPSTART="TCP","{}","{}"'.format(self.hostIP, self.portNumber),
                 "CONNECT OK",
             ],
-            ["AT+CIPSPRT=0", "OK"]
+            ["AT+CIPSPRT=0", "OK"],
         ]
 
         self.serialObj.communicate(messagePair)
@@ -45,7 +45,6 @@ class TCPHelper:
         if self.isInitialized == False:
             raise Exception("[TCP] TCP connection not initialized")
 
-        
         self.serialObj.sendLine("AT+CIPSEND")
         self.serialObj.sendLine(message)
         self.serialObj.sendCtrlZ()

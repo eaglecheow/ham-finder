@@ -4,6 +4,7 @@ import time
 from utils.SerialHelper import SerialHelper
 import math
 
+
 class GPSObject:
     def __init__(self):
         super().__init__()
@@ -19,23 +20,20 @@ class GPSObject:
 
     def checkDataValidity(self) -> bool:
         if (
-            not self.timeStamp or
-            not self.latitude or
-            not self.latitudeDirection or
-            not self.longitude or
-            not self.longitudeDirection or
-            not self.altitude or
-            not self.altitudeUnits or
-            not self.satelliteAmount
+            not self.timeStamp
+            or not self.latitude
+            or not self.latitudeDirection
+            or not self.longitude
+            or not self.longitudeDirection
+            or not self.altitude
+            or not self.altitudeUnits
+            or not self.satelliteAmount
         ):
             return False
         return True
 
 
-
-
 class GPSHelper:
-
     def __init__(self, serialObj: SerialHelper):
         super().__init__()
 
@@ -58,7 +56,7 @@ class GPSHelper:
 
         latDegree = math.floor(lat / 100)
         latMinute = ((lat / 100) - latDegree) * 100
-        
+
         lonDegree = math.floor(lon / 100)
         lonMinute = ((lon / 100) - lonDegree) * 100
 
@@ -83,7 +81,9 @@ class GPSHelper:
 
         self.serialObj.sendLine("AT+CGNSPWR=1")
 
-        self.serialObj.waitMessage("OK", errorMessage="[GPS] Unable to get OK response from device")
+        self.serialObj.waitMessage(
+            "OK", errorMessage="[GPS] Unable to get OK response from device"
+        )
 
         self.serialObj.sendLine("AT+CGNSTST=1")
 
@@ -100,4 +100,5 @@ class GPSHelper:
 
             currentTime = time.time() * 1000
             if (currentTime - startTime) > timeout:
-                raise Exception("[GPS] Timeout while getting GPS location")      
+                raise Exception("[GPS] Timeout while getting GPS location")
+
