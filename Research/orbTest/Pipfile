@@ -10,6 +10,7 @@ opencv-python = "*"
 matplotlib = "*"
 numpy = "*"
 dlib = "*"
+imutils = "*"
 
 [requires]
 python_version = "3.7"
