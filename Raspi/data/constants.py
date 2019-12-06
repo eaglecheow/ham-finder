@@ -1,0 +1,1 @@
+PREDICTION_FILE_PATH = r"..\Research\dlibTest\trained_model\shape_predictor_68_face_landmarks.dat"

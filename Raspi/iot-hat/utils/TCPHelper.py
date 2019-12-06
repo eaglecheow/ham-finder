@@ -51,9 +51,6 @@ class TCPHelper:
 
         self.serialObj.communicate([["[EMPTY]", "SEND OK"]])
 
-        # messagePair = [
-        #     ["AT+CIPSEND", ""],
-        #     [message, message]
-        # ]
 
-        # self.serialObj.communicate(messagePair)
+    def sendImage(self, image):
+        

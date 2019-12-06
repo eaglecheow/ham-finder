@@ -9,6 +9,10 @@ black = "*"
 [packages]
 pyserial = "*"
 pynmea2 = "*"
+dlib = "*"
+numpy = "*"
+imutils = "*"
+opencv-python = "*"
 
 [requires]
 python_version = "3.7"

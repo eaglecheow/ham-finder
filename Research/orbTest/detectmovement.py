@@ -8,6 +8,7 @@ import time
 
 import math
 
+faceMargin = 20
 
 camera = Camera(CameraType.WEB_CAM)
 orb = cv2.ORB_create()
@@ -59,18 +60,18 @@ while True:
 
         for faceIndex, faceBoundingBox in enumerate(previousDetectedFaceList):
             if (
-                (image1Coordinate[0] > faceBoundingBox.left()) and 
-                (image1Coordinate[0] < faceBoundingBox.right()) and
-                (image1Coordinate[1] > faceBoundingBox.top()) and
-                (image1Coordinate[1] < faceBoundingBox.bottom())):
+                (image1Coordinate[0] > faceBoundingBox.left() - faceMargin) and 
+                (image1Coordinate[0] < faceBoundingBox.right() + faceMargin) and
+                (image1Coordinate[1] > faceBoundingBox.top() - faceMargin) and
+                (image1Coordinate[1] < faceBoundingBox.bottom() + faceMargin)):
                 includeKeypoint = False
 
         for faceIndex, faceBoundingBox in enumerate(currentDetectedFaceList):
             if (
-                (image2Coordinate[0] > faceBoundingBox.left()) and 
-                (image2Coordinate[0] < faceBoundingBox.right()) and
-                (image2Coordinate[1] > faceBoundingBox.top()) and
-                (image2Coordinate[1] < faceBoundingBox.bottom())):
+                (image2Coordinate[0] > faceBoundingBox.left() - faceMargin) and 
+                (image2Coordinate[0] < faceBoundingBox.right() + faceMargin) and
+                (image2Coordinate[1] > faceBoundingBox.top() - faceMargin) and
+                (image2Coordinate[1] < faceBoundingBox.bottom() + faceMargin)):
                 includeKeypoint = False
 
 

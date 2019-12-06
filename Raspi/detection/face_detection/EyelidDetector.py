@@ -5,22 +5,21 @@ import numpy
 from imutils import face_utils
 import time
 
-from utils.Camera import Camera, CameraType
-from utils.DataProcessor import DataProcessor
+from detection.utils.Camera import Camera, CameraType
+from detection.utils.DataProcessor import DataProcessor
 
 
 class EyelidDetector:
-
     def __init__(
-        self, 
-        predictionFilePath: str, 
-        cameraType: CameraType = CameraType.WEB_CAM,
+        self,
+        predictionFilePath: str,
+        cameraObject: Camera,
         faceAbsenceTimeout: int = 100000,
         eyelidMovementTimeout: int = 30000,
         frameTimeTimeout: int = 1000,
         eyelidMovementThreshold: float = 0.025,
-        showFrame: bool = False
-        ):
+        showFrame: bool = False,
+    ):
         super().__init__()
 
         if not os.path.exists(predictionFilePath):
@@ -29,7 +28,7 @@ class EyelidDetector:
         faceDetector = dlib.get_frontal_face_detector()
         faceFeatureDetector = dlib.shape_predictor(predictionFilePath)
 
-        self.camera = Camera(cameraType)
+        self.camera = cameraObject
         self.faceDetector = faceDetector
         self.faceFeatureDetector = faceFeatureDetector
         self.dataProcessor = DataProcessor()
@@ -42,7 +41,7 @@ class EyelidDetector:
 
         self.isIdle = False
         self.accumulatedIdleTime = 0
-        
+
         self.lastScanTime = time.time() * 1000
         self.lastFacePresenceTime = time.time() * 1000
         self.lastEyelidMoveTime = time.time() * 1000
@@ -65,7 +64,6 @@ class EyelidDetector:
         if self.showFrame:
             self.imageWindow.clear_overlay()
             self.imageWindow.set_image(frame)
-            
 
         if len(detectedFaceList) <= 0:
 
@@ -75,7 +73,6 @@ class EyelidDetector:
             return True
 
         self.lastFacePresenceTime = currentTime
-
 
         maxFaceArea = 0
         selectedFace = None
@@ -97,11 +94,15 @@ class EyelidDetector:
             self.imageWindow.add_overlay(faceFeatures)
 
         faceFeaturePoints = face_utils.shape_to_np(faceFeatures)
-        (leftEyeStartIndex, leftEyeEndIndex) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
-        (rightEyeStartIndex, rightEyeEndIndex) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]
+        (leftEyeStartIndex, leftEyeEndIndex) = face_utils.FACIAL_LANDMARKS_IDXS[
+            "left_eye"
+        ]
+        (rightEyeStartIndex, rightEyeEndIndex) = face_utils.FACIAL_LANDMARKS_IDXS[
+            "right_eye"
+        ]
 
-        leftEyePoints = faceFeaturePoints[leftEyeStartIndex : leftEyeEndIndex]
-        rightEyePoints = faceFeaturePoints[rightEyeStartIndex : rightEyeEndIndex]
+        leftEyePoints = faceFeaturePoints[leftEyeStartIndex:leftEyeEndIndex]
+        rightEyePoints = faceFeaturePoints[rightEyeStartIndex:rightEyeEndIndex]
 
         leftEAR = self.__eye_aspect_ratio__(leftEyePoints)
         rightEAR = self.__eye_aspect_ratio__(rightEyePoints)
@@ -119,9 +120,6 @@ class EyelidDetector:
             return False
 
         return True
-
-
-
 
     def __euclidean_distance__(self, pointA: float, pointB: float) -> float:
 
