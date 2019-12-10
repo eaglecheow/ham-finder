@@ -52,5 +52,5 @@ class TCPHelper:
         self.serialObj.communicate([["[EMPTY]", "SEND OK"]])
 
 
-    def sendImage(self, image):
+    # def sendImage(self, image):
         
